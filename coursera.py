@@ -28,7 +28,7 @@ def get_course_urls(xml_feed, urls_to_choice):
 def request_content(url):
     requests_data = requests.get(url)
     requests_data.encoding = 'utf-8'
-    return(requests_data.text)
+    return requests_data.text
 
 
 def get_course_info(url):
