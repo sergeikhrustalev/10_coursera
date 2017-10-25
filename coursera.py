@@ -38,7 +38,7 @@ def get_course_info(url):
     soup = BeautifulSoup(html_content, 'html.parser')
 
     description = soup.find('h1').string
-    # sometimes coursera.org responce 404 page (but http status 200)
+    # sometimes coursera.org response 404 page (but http status 200)
     # even if url is correct
     if description == 'ooops... HTTP 404':
         return
