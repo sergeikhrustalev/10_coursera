@@ -1,7 +1,9 @@
-import requests
 import time
 import random
 import sys
+
+import requests
+
 from bs4 import BeautifulSoup
 from openpyxl import Workbook
 from lxml import etree
@@ -70,6 +72,7 @@ def get_course_info_list(course_urls, wait_before_requests_sec):
     course_info_list = []
     try:
         for url in course_urls:
+            time.sleep(wait_before_requests_sec)
             course_info = get_course_info(url)
             if course_info is None:
                 continue
@@ -91,7 +94,8 @@ def output_courses_info_to_xlsx(course_info_list, filepath):
         'LANGUAGE',
         'START DATE',
         'WEEKS AMOUNT',
-        'RATING'])
+        'RATING',
+    ])
 
     for course in course_info_list:
         worksheet.append(course)
