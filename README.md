@@ -13,7 +13,7 @@ See sample.xlsx file for result
 
 # Requirements
 
-Script require python3.5+ to run
+Script require python3.5+ to run  
 See requirements.txt for dependences
 
 # How to run
