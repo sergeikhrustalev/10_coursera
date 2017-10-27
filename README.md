@@ -19,10 +19,25 @@ See requirements.txt for dependences
 # How to run
 ```bash
 $ python coursera.py sample.xlsx
-Loading 25 urls from https://www.coursera.org/sitemap~www~courses.xml
-Start getting course info.
+Start getting course info
 Press CTRL+C to terminate and write data to sample.xlsx immediately
-Writing data to file sample.xlsx
+Loading info from https://www.coursera.org/learn/principles-of-microeconomics
+Loading info from https://www.coursera.org/learn/microbiome
+Loading info from https://www.coursera.org/learn/eu-making-europe-work
+Loading info from https://www.coursera.org/learn/introancientegypt
+Loading info from https://www.coursera.org/learn/strategic-business-analytics
+Loading info from https://www.coursera.org/learn/entrepreneuriatquichangelemonde
+Loading info from https://www.coursera.org/learn/spanish-vocabulary-meeting-people
+Loading info from https://www.coursera.org/learn/erasmus-econometrics
+Loading info from https://www.coursera.org/learn/understanding-china-history-part-1
+Loading info from https://www.coursera.org/learn/social-media-analytics-introduction
+Loading info from https://www.coursera.org/learn/ml-foundations
+Loading info from https://www.coursera.org/learn/quantum-optics-single-photon
+Loading info from https://www.coursera.org/learn/god-korean-context
+Loading info from https://www.coursera.org/learn/construction-scheduling
+Loading info from https://www.coursera.org/learn/home-care
+^CThere are 15 pages processed
+Writing data to sample.xlsx
 ```
 # Project Goals
 

@@ -9,22 +9,20 @@ from openpyxl import Workbook
 from lxml import etree
 
 
-def get_course_urls(xml_feed, urls_to_choice):
-    total_urls = []
-    picked_urls = []
-
+def get_urls_from_feed(xml_feed, urls_to_choice):
+    urls = []
     xml_content = requests.get(xml_feed).text
     root_free = etree.fromstring(xml_content.encode())
     for url_free in root_free.getchildren():
         for loc_free in url_free.getchildren():
-            total_urls.append(loc_free.text)
+            urls.append(loc_free.text)
+    return urls
 
-    for _ in range(urls_to_choice):
-        choice_url = random.choice(total_urls)
-        picked_urls.append(choice_url)
-        total_urls.remove(choice_url)
 
-    return picked_urls
+def withdraw_random_url(urls):
+    url = random.choice(urls)
+    urls.remove(url)
+    return url
 
 
 def request_content(url):
@@ -33,16 +31,15 @@ def request_content(url):
     return requests_data.text
 
 
-def get_course_info(url):
-    html_content = request_content(url)
+def is_coursera_returns_404(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
-
     description = soup.find('h1').string
-    # sometimes coursera.org response 404 page (but http status 200)
-    # even if url is correct
-    if description == 'ooops... HTTP 404':
-        return
+    return description == 'ooops... HTTP 404'
 
+
+def get_course_info(html_content):
+    soup = BeautifulSoup(html_content, 'html.parser')
+    description = soup.find('h1').string
     language = soup.find('div', {'class': 'rc-Language'}).contents[1]
 
     start_date = soup.find(
@@ -68,21 +65,6 @@ def get_course_info(url):
     return url, description, language, start_date, weeks_amount, rating
 
 
-def get_course_info_list(course_urls, wait_before_requests_sec):
-    course_info_list = []
-    try:
-        for url in course_urls:
-            time.sleep(wait_before_requests_sec)
-            course_info = get_course_info(url)
-            if course_info is None:
-                continue
-            course_info_list.append(course_info)
-    except KeyboardInterrupt:
-        pass
-
-    return course_info_list
-
-
 def output_courses_info_to_xlsx(course_info_list, filepath):
 
     workbook = Workbook()
@@ -105,26 +87,37 @@ def output_courses_info_to_xlsx(course_info_list, filepath):
 if __name__ == '__main__':
 
     xml_feed = 'https://www.coursera.org/sitemap~www~courses.xml'
-    urls_to_choice = 25
-    wait_before_requests_sec = 0
+    urls_to_choice = 50
+    wait_before_requests_sec = 2
 
     if len(sys.argv) == 1:
         sys.exit('Syntax: coursera.py <file.xlsx>')
 
-    output_xlsx = sys.argv[1]
-    print('Loading {} urls from {}'.format(urls_to_choice, xml_feed))
-    course_urls = get_course_urls(xml_feed, urls_to_choice)
-    print('Start getting course info.')
+    xlsx_file = sys.argv[1]
+    urls = get_urls_from_feed(xml_feed, urls_to_choice)
+    course_info_list = []
+    url_count = 0
+    print('Start getting course info')
 
     print(
-        'Press CTRL+C to terminate and write data to {} immediately'
-        .format(output_xlsx)
+        'Press CTRL+C to terminate',
+        'and write data to {} immediately'.format(xlsx_file)
     )
 
-    course_info_list = get_course_info_list(
-        course_urls,
-        wait_before_requests_sec
-    )
+    try:
+        while url_count < urls_to_choice and len(urls) > 0:
+            url = withdraw_random_url(urls)
+            time.sleep(wait_before_requests_sec)
+            html_content = request_content(url)
 
-    print('Writing data to file {}'.format(output_xlsx))
-    output_courses_info_to_xlsx(course_info_list, output_xlsx)
+            if is_coursera_returns_404(html_content):
+                continue
+            print('Loading info from {}'.format(url))
+            course_info = get_course_info(html_content)
+            course_info_list.append(course_info)
+            url_count += 1
+    except KeyboardInterrupt:
+        pass
+    print('There are {} pages processed'.format(url_count))
+    print('Writing data to {}'.format(xlsx_file))
+    output_courses_info_to_xlsx(course_info_list, xlsx_file)
