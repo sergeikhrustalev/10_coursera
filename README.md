@@ -9,8 +9,6 @@ Loaded course information is:
 * Amount of weeks
 * Course rating
 
-See sample.xlsx file for result 
-
 # Requirements
 
 Script require python3.5+ to run  
