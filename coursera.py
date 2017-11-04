@@ -115,9 +115,7 @@ if __name__ == '__main__':
         'START DATE', 'WEEKS AMOUNT', 'RATING',
     ])
 
-    html_content = load_html_content(
-        get_random_urls()
-    )
+    html_content = load_html_content(get_random_urls())
 
     for html_content_item in html_content.items():
         course_info = prepare_course_info(*html_content_item)
