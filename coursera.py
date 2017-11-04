@@ -9,17 +9,19 @@ from openpyxl import Workbook
 from lxml import etree
 
 
-def get_urls_from_feed(xml_feed):
+def get_random_urls(xml_feed, url_count=20):
     urls = []
     xml_content = requests.get(xml_feed).text
     root_free = etree.fromstring(xml_content.encode())
     for url_free in root_free.getchildren():
         for loc_free in url_free.getchildren():
             urls.append(loc_free.text)
-    return urls
+    random.shuffle(urls)
+    return urls[:url_count]
 
 
-def request_status_content(url):
+def request_status_content(url, delay_before_request=5):
+    time.sleep(delay_before_request)
     requests_data = requests.get(url)
     requests_data.encoding = 'utf-8'
     return requests_data.status_code, requests_data.text
@@ -61,7 +63,7 @@ def get_course_rating(soup):
         pass
 
 
-def prepare_course_info_for_xlsx(url, html_content):
+def prepare_course_info(url, html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
 
     description = get_course_description(soup)
@@ -97,17 +99,12 @@ def append_course_info_list_into_worksheet(worksheet, course_info_list):
 if __name__ == '__main__':
 
     xml_feed = 'https://www.coursera.org/sitemap~www~courses.xml'
-    urls_to_choice = 50
-    wait_before_requests_sec = 2
 
     if len(sys.argv) == 1:
         sys.exit('Syntax: coursera.py <file.xlsx>')
 
     xlsx_file = sys.argv[1]
-    urls = get_urls_from_feed(xml_feed)
-    random.shuffle(urls)
-    course_info_list = []
-    url_count = 0
+
     print('Start getting course info')
 
     print(
@@ -115,23 +112,24 @@ if __name__ == '__main__':
         'and write data to {} immediately'.format(xlsx_file)
     )
 
+    course_info_list = []
+
     try:
-        while url_count < urls_to_choice:
-            url = urls[url_count]
-            time.sleep(wait_before_requests_sec)
+
+        for url in get_random_urls(xml_feed):
             http_status, html_content = request_status_content(url)
 
             if http_status != requests.codes.ok:
                 continue
 
             print('Loading info from {}'.format(url))
-            course_info = prepare_course_info_for_xlsx(url, html_content)
+            course_info = prepare_course_info(url, html_content)
             course_info_list.append(course_info)
-            url_count += 1
+
     except KeyboardInterrupt:
         pass
 
-    print('There are {} pages processed'.format(url_count))
+    print('There are {} pages processed'.format(len(course_info_list)))
     print('Writing data to {}'.format(xlsx_file))
 
     workbook = Workbook()
