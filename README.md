@@ -16,25 +16,10 @@ See requirements.txt for dependences
 
 # How to run
 ```bash
-$ python coursera.py sample.xlsx
+$ python coursera.py courses.xlsx
 Start getting course info
 Press CTRL+C to terminate and write data immediately
-Loading info from https://www.coursera.org/learn/principles-of-microeconomics
-Loading info from https://www.coursera.org/learn/microbiome
-Loading info from https://www.coursera.org/learn/eu-making-europe-work
-Loading info from https://www.coursera.org/learn/introancientegypt
-Loading info from https://www.coursera.org/learn/strategic-business-analytics
-Loading info from https://www.coursera.org/learn/entrepreneuriatquichangelemonde
-Loading info from https://www.coursera.org/learn/spanish-vocabulary-meeting-people
-Loading info from https://www.coursera.org/learn/erasmus-econometrics
-Loading info from https://www.coursera.org/learn/understanding-china-history-part-1
-Loading info from https://www.coursera.org/learn/social-media-analytics-introduction
-Loading info from https://www.coursera.org/learn/ml-foundations
-Loading info from https://www.coursera.org/learn/quantum-optics-single-photon
-Loading info from https://www.coursera.org/learn/god-korean-context
-Loading info from https://www.coursera.org/learn/construction-scheduling
-Loading info from https://www.coursera.org/learn/home-care
-^CWriting data to sample.xlsx
+^CCourse info was loaded to courses.xlsx
 ```
 # Project Goals
 

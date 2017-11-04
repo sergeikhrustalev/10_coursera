@@ -14,20 +14,36 @@ def get_random_urls(
     url_count=20
 ):
     urls = []
+
     xml_content = requests.get(xml_feed).text
     root_free = etree.fromstring(xml_content.encode())
+
     for url_free in root_free.getchildren():
         for loc_free in url_free.getchildren():
             urls.append(loc_free.text)
+
     random.shuffle(urls)
     return urls[:url_count]
 
 
-def request_status_content(url, delay_before_request=5):
-    time.sleep(delay_before_request)
-    requests_data = requests.get(url)
-    requests_data.encoding = 'utf-8'
-    return requests_data.status_code, requests_data.text
+def load_html_content(urls, delay_before_request=6):
+
+    html_content = dict()
+
+    try:
+        for url in urls:
+            time.sleep(delay_before_request)
+            requests_data = requests.get(url)
+
+            if requests_data.status_code != requests.codes.ok:
+                continue
+
+            requests_data.encoding = 'utf-8'
+            html_content[url] = requests_data.text
+    except KeyboardInterrupt:
+        pass
+
+    return html_content
 
 
 def get_course_description(soup):
@@ -66,7 +82,7 @@ def get_course_rating(soup):
         pass
 
 
-def prepare_course_data(url, html_content):
+def prepare_course_info(url, html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
 
     description = get_course_description(soup)
@@ -86,10 +102,7 @@ def prepare_course_data(url, html_content):
 
 if __name__ == '__main__':
 
-    if len(sys.argv) == 1:
-        sys.exit('Syntax: coursera.py <file.xlsx>')
-
-    xlsx_file = sys.argv[1]
+    xlsx_file = 'course_info.xlsx' if len(sys.argv) == 1 else sys.argv[1]
 
     print('Start getting course info')
     print('Press CTRL+C to terminate and write data immediately')
@@ -102,20 +115,14 @@ if __name__ == '__main__':
         'START DATE', 'WEEKS AMOUNT', 'RATING',
     ])
 
-    try:
+    html_content = load_html_content(
+        get_random_urls()
+    )
 
-        for url in get_random_urls():
-            http_status, html_content = request_status_content(url)
+    for url in html_content.keys():
+        course_info = prepare_course_info(url, html_content[url])
+        worksheet.append(course_info)
 
-            if http_status != requests.codes.ok:
-                continue
-
-            print('Loading info from {}'.format(url))
-            course_info = prepare_course_data(url, html_content)
-            worksheet.append(course_info)
-
-    except KeyboardInterrupt:
-        pass
-
-    print('Writing data to {}'.format(xlsx_file))
     workbook.save(xlsx_file)
+
+    print('Course info was loaded to {}'.format(xlsx_file))
