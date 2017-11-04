@@ -18,7 +18,7 @@ See requirements.txt for dependences
 ```bash
 $ python coursera.py sample.xlsx
 Start getting course info
-Press CTRL+C to terminate and write data to sample.xlsx immediately
+Press CTRL+C to terminate and write data immediately
 Loading info from https://www.coursera.org/learn/principles-of-microeconomics
 Loading info from https://www.coursera.org/learn/microbiome
 Loading info from https://www.coursera.org/learn/eu-making-europe-work

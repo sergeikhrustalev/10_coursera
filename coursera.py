@@ -66,7 +66,7 @@ def get_course_rating(soup):
         pass
 
 
-def prepare_course_info(url, html_content):
+def prepare_course_data(url, html_content):
     soup = BeautifulSoup(html_content, 'html.parser')
 
     description = get_course_description(soup)
@@ -92,22 +92,14 @@ if __name__ == '__main__':
     xlsx_file = sys.argv[1]
 
     print('Start getting course info')
-
-    print(
-        'Press CTRL+C to terminate',
-        'and write data to {} immediately'.format(xlsx_file)
-    )
+    print('Press CTRL+C to terminate and write data immediately')
 
     workbook = Workbook()
     worksheet = workbook.active
 
     worksheet.append([
-        'URL ADDRESS',
-        'DESCRIPTION',
-        'LANGUAGE',
-        'START DATE',
-        'WEEKS AMOUNT',
-        'RATING',
+        'URL ADDRESS', 'DESCRIPTION', 'LANGUAGE',
+        'START DATE', 'WEEKS AMOUNT', 'RATING',
     ])
 
     try:
