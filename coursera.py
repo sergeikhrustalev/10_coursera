@@ -9,7 +9,10 @@ from openpyxl import Workbook
 from lxml import etree
 
 
-def get_random_urls(xml_feed, url_count=20):
+def get_random_urls(
+    xml_feed='https://www.coursera.org/sitemap~www~courses.xml',
+    url_count=20
+):
     urls = []
     xml_content = requests.get(xml_feed).text
     root_free = etree.fromstring(xml_content.encode())
@@ -81,24 +84,7 @@ def prepare_course_info(url, html_content):
     return url, description, language, start_date, weeks_amount, rating
 
 
-def append_course_info_list_into_worksheet(worksheet, course_info_list):
-
-    worksheet.append([
-        'URL ADDRESS',
-        'DESCRIPTION',
-        'LANGUAGE',
-        'START DATE',
-        'WEEKS AMOUNT',
-        'RATING',
-    ])
-
-    for course in course_info_list:
-        worksheet.append(course)
-
-
 if __name__ == '__main__':
-
-    xml_feed = 'https://www.coursera.org/sitemap~www~courses.xml'
 
     if len(sys.argv) == 1:
         sys.exit('Syntax: coursera.py <file.xlsx>')
@@ -112,11 +98,21 @@ if __name__ == '__main__':
         'and write data to {} immediately'.format(xlsx_file)
     )
 
-    course_info_list = []
+    workbook = Workbook()
+    worksheet = workbook.active
+
+    worksheet.append([
+        'URL ADDRESS',
+        'DESCRIPTION',
+        'LANGUAGE',
+        'START DATE',
+        'WEEKS AMOUNT',
+        'RATING',
+    ])
 
     try:
 
-        for url in get_random_urls(xml_feed):
+        for url in get_random_urls():
             http_status, html_content = request_status_content(url)
 
             if http_status != requests.codes.ok:
@@ -124,15 +120,10 @@ if __name__ == '__main__':
 
             print('Loading info from {}'.format(url))
             course_info = prepare_course_info(url, html_content)
-            course_info_list.append(course_info)
+            worksheet.append(course_info)
 
     except KeyboardInterrupt:
         pass
 
-    print('There are {} pages processed'.format(len(course_info_list)))
     print('Writing data to {}'.format(xlsx_file))
-
-    workbook = Workbook()
-    worksheet = workbook.active
-    append_course_info_list_into_worksheet(worksheet, course_info_list)
     workbook.save(xlsx_file)

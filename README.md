@@ -34,8 +34,7 @@ Loading info from https://www.coursera.org/learn/quantum-optics-single-photon
 Loading info from https://www.coursera.org/learn/god-korean-context
 Loading info from https://www.coursera.org/learn/construction-scheduling
 Loading info from https://www.coursera.org/learn/home-care
-^CThere are 15 pages processed
-Writing data to sample.xlsx
+^CWriting data to sample.xlsx
 ```
 # Project Goals
 
