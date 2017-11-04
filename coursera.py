@@ -111,7 +111,7 @@ if __name__ == '__main__':
                 continue
 
             print('Loading info from {}'.format(url))
-            course_info = prepare_course_info(url, html_content)
+            course_info = prepare_course_data(url, html_content)
             worksheet.append(course_info)
 
     except KeyboardInterrupt:
