@@ -82,8 +82,8 @@ def get_course_rating(soup):
         pass
 
 
-def prepare_course_info(url, html_content):
-    soup = BeautifulSoup(html_content, 'html.parser')
+def prepare_course_info(url, html):
+    soup = BeautifulSoup(html, 'html.parser')
 
     description = get_course_description(soup)
     language = get_course_language(soup)
@@ -119,8 +119,8 @@ if __name__ == '__main__':
         get_random_urls()
     )
 
-    for url in html_content.keys():
-        course_info = prepare_course_info(url, html_content[url])
+    for html_content_item in html_content.items():
+        course_info = prepare_course_info(*html_content_item)
         worksheet.append(course_info)
 
     workbook.save(xlsx_file)
