@@ -30,18 +30,15 @@ def load_html_content(urls, delay_before_request=6):
 
     html_content = dict()
 
-    try:
-        for url in urls:
-            time.sleep(delay_before_request)
-            requests_data = requests.get(url)
+    for url in urls:
+        time.sleep(delay_before_request)
+        requests_data = requests.get(url)
 
-            if requests_data.status_code != requests.codes.ok:
-                continue
+        if requests_data.status_code != requests.codes.ok:
+            continue
 
-            requests_data.encoding = 'utf-8'
-            html_content[url] = requests_data.text
-    except KeyboardInterrupt:
-        pass
+        requests_data.encoding = 'utf-8'
+        html_content[url] = requests_data.text
 
     return html_content
 
@@ -105,7 +102,6 @@ if __name__ == '__main__':
     xlsx_file = 'course_info.xlsx' if len(sys.argv) == 1 else sys.argv[1]
 
     print('Start getting course info')
-    print('Press CTRL+C to terminate and write data immediately')
 
     workbook = Workbook()
     worksheet = workbook.active

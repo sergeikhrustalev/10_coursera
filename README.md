@@ -18,8 +18,7 @@ See requirements.txt for dependences
 ```bash
 $ python coursera.py courses.xlsx
 Start getting course info
-Press CTRL+C to terminate and write data immediately
-^CCourse info was loaded to courses.xlsx
+Course info was loaded to courses.xlsx
 ```
 # Project Goals
 
