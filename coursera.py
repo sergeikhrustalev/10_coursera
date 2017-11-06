@@ -1,6 +1,7 @@
 import time
 import random
 import sys
+from collections import namedtuple
 
 import requests
 
@@ -79,7 +80,13 @@ def get_course_rating(soup):
         pass
 
 
-def prepare_course_info(url, html):
+def get_course_info(url, html):
+
+    CourseInfo = namedtuple('CourseInfo', [
+        'url', 'description', 'language',
+        'start_date', 'weeks_amount', 'rating'
+    ])
+
     soup = BeautifulSoup(html, 'html.parser')
 
     description = get_course_description(soup)
@@ -88,13 +95,24 @@ def prepare_course_info(url, html):
     weeks_amount = get_course_weeks_amount(soup)
     rating = get_course_rating(soup)
 
-    if weeks_amount is None:
-        weeks_amount = 'No course plan'
+    return CourseInfo(
+        url, description, language,
+        start_date, weeks_amount, rating
+    )
 
-    if rating is None:
-        rating = 'Not rated'
 
-    return url, description, language, start_date, weeks_amount, rating
+def load_course_info_into_list():
+
+    course_info_list = []
+
+    html_content = load_html_content(get_random_urls())
+
+    for html_content_item in html_content.items():
+        course_info = get_course_info(*html_content_item)
+
+        course_info_list.append(course_info)
+
+    return course_info_list
 
 
 if __name__ == '__main__':
@@ -111,11 +129,16 @@ if __name__ == '__main__':
         'START DATE', 'WEEKS AMOUNT', 'RATING',
     ])
 
-    html_content = load_html_content(get_random_urls())
+    for course_info in load_course_info_into_list():
 
-    for html_content_item in html_content.items():
-        course_info = prepare_course_info(*html_content_item)
-        worksheet.append(course_info)
+        worksheet_string = list(course_info)
+        if worksheet_string[4] is None:
+            worksheet_string[4] = 'No course plan'
+
+        if worksheet_string[5] is None:
+            worksheet_string[5] = 'Not rated'
+
+        worksheet.append(worksheet_string)
 
     workbook.save(xlsx_file)
 
